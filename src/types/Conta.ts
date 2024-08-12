@@ -8,19 +8,19 @@ export class Conta {
     protected nome: string;
     protected saldo: number = Armazenador.obter<number>("saldo") || 0;
     private transacoes: Transacao[] = Armazenador.obter<Transacao[]>(("transacoes"), (key: string, value: any) => {
-        if(key === "data") {
+        if (key === "data") {
             return new Date(value);
         }
         return value;
     }) || [];
 
-    constructor(nome: string){
+    constructor(nome: string) {
         this.nome = nome;
     }
 
-public getTitular(){
-    return this.nome;
-}
+    public getTitular() {
+        return this.nome;
+    }
 
     getGruposTransacoes(): GrupoTransacao[] {
         const gruposTransacoes: GrupoTransacao[] = [];
@@ -45,19 +45,19 @@ public getTitular(){
     getSaldo() {
         return this.saldo;
     }
-    
-     getDataAcesso(): Date {
+
+    getDataAcesso(): Date {
         return new Date();
     }
-    
+
     public registrarTransacao(novaTransacao: Transacao): void {
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) {
             this.depositar(novaTransacao.valor);
-        } 
+        }
         else if (novaTransacao.tipoTransacao == TipoTransacao.TRANSFERENCIA || novaTransacao.tipoTransacao == TipoTransacao.PAGAMENTO_BOLETO) {
             this.debitar(novaTransacao.valor);
             novaTransacao.valor *= -1;
-        } 
+        }
         else {
             throw new Error("Tipo de Transação é inválido!");
         }
@@ -74,7 +74,7 @@ public getTitular(){
     }
 
     @ValidaDeposito
-    private depositar(valor: number): void {    
+    private depositar(valor: number): void {
         this.saldo += valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
@@ -83,8 +83,8 @@ public getTitular(){
 export class ContaPremium extends Conta {
     registrarTransacao(transacao: Transacao): void {
         if (transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
-                    console.log("ganhou um bônus de 0.50 centavos");
-                    transacao.valor += 0.5
+            console.log("ganhou um bônus de 0.50 centavos");
+            transacao.valor += 0.5
         }
         super.registrarTransacao(transacao)
     }
